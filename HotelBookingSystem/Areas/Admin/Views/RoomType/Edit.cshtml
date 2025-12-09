@@ -1,0 +1,52 @@
+﻿@model HotelBookingSystem.Models.RoomType
+
+<form method="post">
+    <input asp-for="RoomTypeId" hidden />
+    <div class="border p-3 my-4">
+        <div class="row pb-2">
+            <h2 class="text-primary">Update Room Type</h2>
+            <hr />
+        </div>
+
+        <div class="mb-3 row">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 row">
+            <label asp-for="Capacity"></label>
+            <input asp-for="Capacity" class="form-control" />
+            <span asp-validation-for="Capacity" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 row">
+            <label asp-for="PricePerNight"></label>
+            <input asp-for="PricePerNight" class="form-control" />
+            <span asp-validation-for="PricePerNight" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 row">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-6 col-md-3">
+                <button type="submit" class="btn btn-danger form-control">Update</button>
+            </div>
+            <div class="col-6 col-md-3">
+                <a asp-controller="RoomType" asp-action="Index" class="btn btn-secondary form-control">
+                    Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

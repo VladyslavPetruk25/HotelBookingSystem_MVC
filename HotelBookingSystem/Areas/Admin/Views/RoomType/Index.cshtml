@@ -1,0 +1,48 @@
+﻿@model List<RoomType>
+<partial name="_Notification" />
+<div class="container">
+    <div class="row pt-4 pb-3">
+        <div class="col-6">
+            <h2 class="text-primary">
+                Room Type List
+            </h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="RoomType" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create New Room Type
+            </a>
+        </div>
+    </div>
+</div>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Capacity</th>
+            <th>Price per night</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var obj in Model.OrderBy(u => u.RoomTypeId))
+        {
+            <tr>
+                <td>@obj.Name</td>
+                <td>@obj.Capacity</td>
+                <td>@obj.PricePerNight.ToString("c")</td>
+                <td>@obj.Description</td>
+                <td>
+                    <div class="w-75 btn-group" role="group">
+                        <a asp-controller="RoomType" asp-action="Edit" asp-route-id="@obj.RoomTypeId" class="btn btn-primary mx-2">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <a asp-controller="RoomType" asp-action="Delete" asp-route-id="@obj.RoomTypeId" class="btn btn-danger mx-2">
+                            <i class="bi bi-trash-fill"></i> Delete
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
