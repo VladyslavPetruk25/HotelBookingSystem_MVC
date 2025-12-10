@@ -30,7 +30,9 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Create(RoomType obj)
         {
-            var existingName = _unitOfWork.RoomType.Get(u => u.Name.ToLower() == obj.Name.ToLower());
+            var existingName = _unitOfWork.RoomType
+                .Get(u => u.Name.ToLower() == obj.Name.ToLower());
+
             if (existingName != null)
             {
                 ModelState.AddModelError("Name", "That type of room is already exists!");
@@ -58,6 +60,7 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
             }
 
             var roomTypeFromDb = _unitOfWork.RoomType.Get(u => u.RoomTypeId == id);
+
             if (roomTypeFromDb == null)
             {
                 return NotFound();
@@ -69,7 +72,9 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Edit(RoomType obj)
         {
-            var duplicateType = _unitOfWork.RoomType.Get(u => u.Name.ToLower() == obj.Name.ToLower() && u.RoomTypeId != obj.RoomTypeId);
+            var duplicateType = _unitOfWork.RoomType
+                .Get(u => u.Name.ToLower() == obj.Name.ToLower() && u.RoomTypeId != obj.RoomTypeId);
+
             if (duplicateType != null)
             {
                 ModelState.AddModelError("Name", "Another room type already has this name!");

@@ -5,6 +5,7 @@ using HotelBookingSystem.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using HotelBookingSystem.Utility;
 using Microsoft.Identity.Client;
+using HotelBookingSystem.Models.Models.ViewModels;
 
 namespace HotelBookingSystem.Areas.Admin.Controllers
 {
@@ -19,7 +20,8 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            var objRoomList = _unitOfWork.Room.GetAll(includeProperties: "RoomType").ToList();
+            var objRoomList = _unitOfWork.Room
+                .GetAll(includeProperties: "RoomType").ToList();
 
             return View(objRoomList);
         }
@@ -27,51 +29,51 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            IEnumerable<SelectListItem> typeList = _unitOfWork.RoomType.GetAll().Select(u => new SelectListItem
+            RoomVM roomVM = new()
             {
-                Text = u.Name,
-                Value = u.RoomTypeId.ToString()
-            });
-            ViewBag.RoomTypeList = typeList;
+                RoomTypeList = _unitOfWork.RoomType
+                .GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.RoomTypeId.ToString()
+                }),
+                Room = new Room()
+            };
 
-            return View();
+            return View(roomVM);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Room obj)
+        public IActionResult Create(RoomVM roomVM)
         {
-            bool isRoomExists = _unitOfWork.Room.GetAll().Any(u => u.RoomNumber == obj.RoomNumber);
-            if (isRoomExists)
+            var existingRoom = _unitOfWork.Room
+                .Get(u => u.RoomNumber == roomVM.Room.RoomNumber && u.RoomId != roomVM.Room.RoomId);
+            if (existingRoom != null)
             {
-                ModelState.AddModelError("RoomNumber", "Room with same number is already exist!");
+                ModelState.AddModelError("Room.RoomNumber", "Room with same number is already exist!");
             }
-
-            ModelState.Remove("Status");
 
             if (ModelState.IsValid)
             {
-                obj.Status = SD.ROOM_AVAILABLE;
+                roomVM.Room.Status = SD.ROOM_AVAILABLE;
 
-                _unitOfWork.Room.Add(obj);
+                _unitOfWork.Room.Add(roomVM.Room);
                 _unitOfWork.Save();
                 TempData["success"] = "Room created successfully";
 
                 return RedirectToAction("Index");
             }
-            else
-            {
-                TempData["error"] = "Error creating room! Please check inputs.";
-            }
+            TempData["error"] = "Error creating room! Please check inputs.";
 
-            IEnumerable<SelectListItem> typeList = _unitOfWork.RoomType.GetAll().Select(u => new SelectListItem
+            roomVM.RoomTypeList = _unitOfWork.RoomType
+                .GetAll().Select(u => new SelectListItem
             {
                 Text = u.Name,
                 Value = u.RoomTypeId.ToString()
             });
-            ViewBag.RoomTypeList = typeList; 
 
-            return View(obj);
+            return View(roomVM);
         }
 
         [HttpGet]
@@ -81,6 +83,7 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+
             Room? roomFromDb = _unitOfWork.Room.Get(u => u.RoomId == id);
 
             if (roomFromDb == null)
@@ -88,51 +91,48 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            IEnumerable<SelectListItem> typeList = _unitOfWork.RoomType.GetAll().Select(u => new SelectListItem
+            RoomVM roomVM = new RoomVM()
             {
-                Text = u.Name,
-                Value = u.RoomTypeId.ToString()
-            });
+                Room = roomFromDb,
+                RoomTypeList = _unitOfWork.RoomType.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.RoomTypeId.ToString()
+                })
+            };
 
-            ViewBag.RoomTypeList = typeList;
-
-            return View(roomFromDb);
+            return View(roomVM);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Room obj)
+        public IActionResult Edit(RoomVM roomVM)
         {
-            var existingRoom = _unitOfWork.Room.Get(u => u.RoomNumber == obj.RoomNumber && u.RoomId != obj.RoomId);
+            var existingRoom = _unitOfWork.Room
+                .Get(u => u.RoomNumber == roomVM.Room.RoomNumber && u.RoomId != roomVM.Room.RoomId);
             if (existingRoom != null)
             {
-                ModelState.AddModelError("RoomNumber", "Another room already has the same number!");
+                ModelState.AddModelError("Room.RoomNumber", "Another room already has the same number!");
             }
-
-            ModelState.Remove("Status");
 
             if (ModelState.IsValid)
             {
-                obj.Status = SD.ROOM_AVAILABLE;
-                _unitOfWork.Room.Update(obj);
+                roomVM.Room.Status = SD.ROOM_AVAILABLE;
+                _unitOfWork.Room.Update(roomVM.Room);
                 _unitOfWork.Save();
                 TempData["success"] = "Room updated successfully";
 
                 return RedirectToAction("Index");
             }
-            else
-            {
-                TempData["error"] = "Error editing room! Please check inputs.";
-            }
+            TempData["error"] = "Error editing room! Please check inputs.";
 
-            IEnumerable<SelectListItem> typeList = _unitOfWork.RoomType.GetAll().Select(u => new SelectListItem
+            roomVM.RoomTypeList = _unitOfWork.RoomType.GetAll().Select(u => new SelectListItem
             {
                 Text = u.Name,
                 Value = u.RoomTypeId.ToString()
             });
-            ViewBag.RoomTypeList = typeList;
 
-            return View(obj);
+            return View(roomVM);
         }
 
         [HttpGet]
@@ -142,20 +142,13 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            Room? roomFromDb = _unitOfWork.Room.Get(u => u.RoomId == id, includeProperties: "RoomType");
+            Room? roomFromDb = _unitOfWork.Room
+                .Get(u => u.RoomId == id, includeProperties: "RoomType");
 
             if (roomFromDb == null)
             {
                 return NotFound();
             }
-
-            IEnumerable<SelectListItem> typeList = _unitOfWork.RoomType.GetAll().Select(u => new SelectListItem
-            {
-                Text = u.Name,
-                Value = u.RoomTypeId.ToString()
-            });
-
-            ViewBag.RoomTypeList = typeList;
 
             return View(roomFromDb);
         }

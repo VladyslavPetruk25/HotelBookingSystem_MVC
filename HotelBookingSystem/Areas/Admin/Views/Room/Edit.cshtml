@@ -1,45 +1,49 @@
-﻿@model HotelBookingSystem.Models.Room
+﻿@model RoomVM
 
-<form method="post">
-    <input asp-for="RoomId" hidden />
-    <div class="border p-3 my-4">
-        <div class="row pb-2">
-            <h2 class="text-primary">Update Room</h2>
-            <hr/>
-        </div>
-
-        <div class="mb-3 row">
-            <label asp-for="RoomNumber"></label>
-            <input asp-for="RoomNumber" class="form-control" />
-            <span asp-validation-for="RoomNumber" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3 row">
-            <label asp-for="Flour"></label>
-            <input asp-for="Flour" class="form-control" />
-            <span asp-validation-for="Flour" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3 row">
-            <label asp-for="RoomTypeId">Room Type</label>
-            <select asp-for="RoomTypeId" asp-items="ViewBag.RoomTypeList" class="form-select">
-                <option disabled selected>-- Select Room Type --</option>
-            </select>
-            <span asp-validation-for="RoomTypeId" class="text-danger"></span>
-        </div>
-
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary by-gradient ml-0 py-3">
         <div class="row">
-            <div class="col-6 col-md-3">
-                <button type="submit" class="btn btn-primary form-control">Update</button>
-            </div>
-            <div class="col-6 col-md-3">
-                <a asp-controller="Room" asp-action="Index" class="btn btn-secondary form-control">
-                    Back to List
-                </a>
+            <div class="col-12 text-center">
+                <h2 class="text-primary py-2">Update Room Type</h2>
             </div>
         </div>
     </div>
-</form>
+    <div class="card-body p-4">
+        <form method="post">
+            <input asp-for="Room.RoomId" hidden />
+            <div class="mb-3 row">
+                <label asp-for="Room.RoomNumber"></label>
+                <input asp-for="Room.RoomNumber" class="form-control border-0 shadow" />
+                <span asp-validation-for="Room.RoomNumber" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 row">
+                <label asp-for="Room.Flour"></label>
+                <input asp-for="Room.Flour" class="form-control border-0 shadow" />
+                <span asp-validation-for="Room.Flour" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 row">
+                <label asp-for="Room.RoomTypeId">Room Type</label>
+                <select asp-for="Room.RoomTypeId" asp-items="ViewBag.RoomTypeList" class="form-select border-0 shadow">
+                    <option disabled selected>-- Select Room Type --</option>
+                </select>
+                <span asp-validation-for="Room.RoomTypeId" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-6 col-md-3">
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a asp-controller="Room" asp-action="Index" class="btn btn-secondary form-control">
+                        Back to List
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
     @{
