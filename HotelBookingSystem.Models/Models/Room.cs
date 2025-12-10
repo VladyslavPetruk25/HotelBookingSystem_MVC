@@ -10,14 +10,15 @@ namespace HotelBookingSystem.Models
         [Key]
         public int RoomId { get; set; }
         public int RoomTypeId { get; set; }
-        [ValidateNever]
         [ForeignKey("RoomTypeId")]
+        [ValidateNever]
         public virtual RoomType RoomType { get; set; }
         [Required]
         public int RoomNumber { get; set; }
         [Required]
         public int Flour { get; set; } 
         [Required]
+        [ValidateNever]
         public string Status { get; set; }
     }
 }

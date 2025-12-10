@@ -22,7 +22,8 @@ namespace HotelBookingSystem.DataAccess.Data
                     Name = "Standart",
                     Description = "Cozy room for one or two",
                     Capacity = 2,
-                    PricePerNight = 1000m
+                    PricePerNight = 1000m,
+                    ImageUrl=""
                 },
                 new RoomType
                 {
@@ -30,7 +31,8 @@ namespace HotelBookingSystem.DataAccess.Data
                     Name = "Luxe",
                     Description = "Large room with sea view",
                     Capacity = 4,
-                    PricePerNight = 2500m
+                    PricePerNight = 2500m,
+                    ImageUrl = ""
                 }
             );
             modelBuilder.Entity<User>().HasData(

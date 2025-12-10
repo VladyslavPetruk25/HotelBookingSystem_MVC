@@ -19,6 +19,8 @@ namespace HotelBookingSystem.Models
         [Required]
         public decimal PricePerNight { get; set; }
         [ValidateNever]
+        public string ImageUrl { get; set; }
+        [ValidateNever]
         public ICollection<Room> Room { get; set; }
     }
 }
