@@ -35,13 +35,6 @@ namespace HotelBookingSystem.DataAccess.Repository
             dbSet.RemoveRange(entities);
         }
 
-        public IEnumerable<T> GetAll()
-        {
-            IQueryable<T> query = dbSet;
-
-            return query.ToList();
-        }
-
         public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;

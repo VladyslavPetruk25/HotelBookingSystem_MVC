@@ -22,4 +22,8 @@
     <ProjectReference Include="..\HotelBookingSystem.Utility\HotelBookingSystem.Utility.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\room_type\" />
+  </ItemGroup>
+
 </Project>

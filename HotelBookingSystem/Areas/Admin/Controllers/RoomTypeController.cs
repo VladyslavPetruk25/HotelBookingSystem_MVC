@@ -9,9 +9,11 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
     public class RoomTypeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public RoomTypeController(IUnitOfWork unitOfWork)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public RoomTypeController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -28,7 +30,7 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(RoomType obj)
+        public IActionResult Create(RoomType obj, IFormFile? file)
         {
             var existingName = _unitOfWork.RoomType
                 .Get(u => u.Name.ToLower() == obj.Name.ToLower());
@@ -40,6 +42,20 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                if (file != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string roomTypePath = Path.Combine(wwwRootPath, @"images\room_type");
+
+                    using (var fileStream = new FileStream(Path.Combine(roomTypePath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    obj.ImageUrl = @"\images\room_type\" + fileName;
+                }
+
                 _unitOfWork.RoomType.Add(obj);
                 _unitOfWork.Save();
                 TempData["success"] = "Room type is created successfully!";
@@ -70,7 +86,7 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(RoomType obj)
+        public IActionResult Edit(RoomType obj, IFormFile? file)
         {
             var duplicateType = _unitOfWork.RoomType
                 .Get(u => u.Name.ToLower() == obj.Name.ToLower() && u.RoomTypeId != obj.RoomTypeId);
@@ -82,6 +98,30 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                if (file != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string roomTypePath = Path.Combine(wwwRootPath, @"images\room_type");
+
+                    if (!string.IsNullOrEmpty(obj.ImageUrl))
+                    {
+                        var oldImagePath = Path.Combine(wwwRootPath, obj.ImageUrl.TrimStart('\\'));
+
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    using (var fileStream = new FileStream(Path.Combine(roomTypePath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    obj.ImageUrl = @"\images\room_type\" + fileName;
+                }
+
                 _unitOfWork.RoomType.Update(obj);
                 _unitOfWork.Save();
                 TempData["success"] = "Room type is updated successfully!";
@@ -93,36 +133,41 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
             return View(obj);
         }
 
+        #region API CALLS
+
         [HttpGet]
+        public IActionResult GetAll()
+        {
+            var objRoomTypeList = _unitOfWork.RoomType.GetAll().ToList();
+
+            return Json(new { data = objRoomTypeList });
+        }
+
+        [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            if (id == null || id == 0)
+            var roomTypeToBeDeleted = _unitOfWork.RoomType.Get(u => u.RoomTypeId == id);
+            if (roomTypeToBeDeleted == null)
             {
-                return NotFound();
+                return Json(new { success = false, message = "Error while deleting" });
             }
 
-            var roomTypeFromDb = _unitOfWork.RoomType.Get(u => u.RoomTypeId == id);
-            if (roomTypeFromDb == null)
+            if (!string.IsNullOrEmpty(roomTypeToBeDeleted.ImageUrl))
             {
-                return NotFound();
+                var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, roomTypeToBeDeleted.ImageUrl.TrimStart('\\'));
+
+                if (System.IO.File.Exists(oldImagePath))
+                {
+                    System.IO.File.Delete(oldImagePath);
+                }
             }
 
-            return View(roomTypeFromDb);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePOST(int? id)
-        {
-            var obj = _unitOfWork.RoomType.Get(u=>u.RoomTypeId == id);
-            if (obj == null)
-            {
-                return NotFound();
-            }
-            _unitOfWork.RoomType.Remove(obj);
+            _unitOfWork.RoomType.Remove(roomTypeToBeDeleted);
             _unitOfWork.Save();
-            TempData["success"] = "Room type is deleted successfully!";
 
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Delete Successful" });
         }
+
+        #endregion
     }
 }

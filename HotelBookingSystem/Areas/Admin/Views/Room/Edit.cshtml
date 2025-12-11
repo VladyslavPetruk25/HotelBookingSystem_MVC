@@ -25,7 +25,7 @@
 
             <div class="mb-3 row">
                 <label asp-for="Room.RoomTypeId">Room Type</label>
-                <select asp-for="Room.RoomTypeId" asp-items="ViewBag.RoomTypeList" class="form-select border-0 shadow">
+                <select asp-for="@Model.Room.RoomTypeId" asp-items="@Model.RoomTypeList" class="form-select border-0 shadow">
                     <option disabled selected>-- Select Room Type --</option>
                 </select>
                 <span asp-validation-for="Room.RoomTypeId" class="text-danger"></span>

@@ -135,38 +135,31 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
             return View(roomVM);
         }
 
+        #region API CALLS
+
         [HttpGet]
+        public IActionResult GetAll()
+        {
+            var objRoomList = _unitOfWork.Room.GetAll(includeProperties: "RoomType").ToList();
+
+            return Json(new { data = objRoomList });
+        }
+
+        [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            if (id == null || id == 0)
+            var roomToBeDeleted = _unitOfWork.Room.Get(u => u.RoomId == id);
+            if (roomToBeDeleted == null)
             {
-                return NotFound();
-            }
-            Room? roomFromDb = _unitOfWork.Room
-                .Get(u => u.RoomId == id, includeProperties: "RoomType");
-
-            if (roomFromDb == null)
-            {
-                return NotFound();
+                return Json(new { success = false, message = "Error while deleting" });
             }
 
-            return View(roomFromDb);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePOST(int? id)
-        {
-            Room? obj = _unitOfWork.Room.Get(u => u.RoomId == id);
-            if (obj == null)
-            {
-                TempData["error"] = "Error: Room not found!";
-                return NotFound();
-            }
-            _unitOfWork.Room.Remove(obj);
+            _unitOfWork.Room.Remove(roomToBeDeleted);
             _unitOfWork.Save();
-            TempData["success"] = "Room deleted successfully";
 
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Delete Successful" });
         }
+
+        #endregion
     }
 }
