@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using HotelBookingSystem.DataAccess.Repository.IRepository;
 using HotelBookingSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,15 +9,26 @@ namespace HotelBookingSystem.Areas.Client.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            return View();
+            IEnumerable<RoomType> roomTypeList = _unitOfWork.RoomType.GetAll().ToList();
+
+            return View(roomTypeList);
+        }
+
+        public IActionResult Details(int id)
+        {
+            RoomType roomType = _unitOfWork.RoomType.Get(u=>u.RoomTypeId == id);
+
+            return View(roomType);
         }
 
         public IActionResult Privacy()

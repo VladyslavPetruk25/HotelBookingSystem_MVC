@@ -1,9 +1,11 @@
 ﻿using HotelBookingSystem.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelBookingSystem.DataAccess.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -15,6 +17,9 @@ namespace HotelBookingSystem.DataAccess.Data
         public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<RoomType>().HasData(
                 new RoomType
                 {
