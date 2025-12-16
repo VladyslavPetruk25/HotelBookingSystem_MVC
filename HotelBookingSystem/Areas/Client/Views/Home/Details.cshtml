@@ -1,7 +1,7 @@
 ﻿@model HotelBookingSystem.Models.RoomType
 
 <form method="post" asp-action="Summary">
-    <input asp-for="RoomTypeId" hidden />
+    <input type="hidden" name="roomTypeId" value="@Model.RoomTypeId"/>
     <div class="container pt-4">
         <div class="card border-0 shadow-lg mb-5" style="border-radius: 15px; overflow: hidden;">
             <div class="card-header bg-primary bg-gradient text-white py-3">

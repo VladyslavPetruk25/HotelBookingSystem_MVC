@@ -17,8 +17,5 @@ namespace HotelBookingSystem.Models
         public int RoomNumber { get; set; }
         [Required]
         public int Flour { get; set; } 
-        [Required]
-        [ValidateNever]
-        public string Status { get; set; }
     }
 }

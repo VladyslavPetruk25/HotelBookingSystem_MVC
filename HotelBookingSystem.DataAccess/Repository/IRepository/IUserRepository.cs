@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace HotelBookingSystem.DataAccess.Repository.IRepository
 {
-    public interface IUserRepository : IRepository<User>
+    public interface IUserRepository : IRepository<ApplicationUser>
     {
-        void Update(User obj);
+        void Update(ApplicationUser obj);
     }
 }

@@ -1,11 +1,14 @@
 ﻿using HotelBookingSystem.DataAccess.Repository.IRepository;
 using HotelBookingSystem.Models;
+using HotelBookingSystem.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 
 namespace HotelBookingSystem.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.ROLE_ADMIN)]
     public class RoomTypeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

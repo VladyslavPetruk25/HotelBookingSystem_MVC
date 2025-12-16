@@ -4,6 +4,7 @@ using HotelBookingSystem.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelBookingSystem.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251215200745_AddBookingDetails")]
+    partial class AddBookingDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,6 +92,10 @@ namespace HotelBookingSystem.DataAccess.Migrations
                     b.Property<int>("RoomTypeId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("RoomId");
 
                     b.HasIndex("RoomTypeId");
@@ -101,14 +108,16 @@ namespace HotelBookingSystem.DataAccess.Migrations
                             RoomId = 1,
                             Flour = 1,
                             RoomNumber = 101,
-                            RoomTypeId = 1
+                            RoomTypeId = 1,
+                            Status = "Available"
                         },
                         new
                         {
                             RoomId = 2,
                             Flour = 2,
                             RoomNumber = 205,
-                            RoomTypeId = 2
+                            RoomTypeId = 2,
+                            Status = "Available"
                         });
                 });
 

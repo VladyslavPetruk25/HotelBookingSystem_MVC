@@ -1,5 +1,53 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model IEnumerable<HotelBookingSystem.Models.Booking>
+
+<div class="container pt-4">
+    <div class="row pt-4 pb-3">
+        <div class="col-6">
+            <h2 class="text-primary">My Bookings</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-area="Client" asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Book New Room
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-striped shadow">
+        <thead>
+            <tr>
+                <th>Room Type</th>
+                <th>Room No</th>
+                <th>Dates</th>
+                <th>Total</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td>@obj.Room.RoomType.Name</td>
+                    <td>@obj.Room.RoomNumber</td>
+                    <td>
+                        @obj.CheckInDate.ToShortDateString() - @obj.CheckOutDate.ToShortDateString()
+                    </td>
+                    <td>@obj.TotalCost.ToString("c")</td>
+                    <td>
+                        @if (obj.Status == SD.STATUS_APPROVED)
+                        {
+                            <span class="badge bg-success">Approved</span>
+                        }
+                        else if (obj.Status == SD.STATUS_PENDING)
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                        else if (obj.Status == SD.STATUS_CANCELLED)
+                        {
+                            <span class="badge bg-danger">Cancelled</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

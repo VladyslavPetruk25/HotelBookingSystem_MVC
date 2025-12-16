@@ -5,10 +5,18 @@
 namespace HotelBookingSystem.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class AddStatusToRoom : Migration
+    public partial class RemoveStatusFromModelRoom : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: "Status",
+                table: "Room");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
                 name: "Status",
@@ -30,14 +38,6 @@ namespace HotelBookingSystem.DataAccess.Migrations
                 keyValue: 2,
                 column: "Status",
                 value: "Available");
-        }
-
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "Status",
-                table: "Room");
         }
     }
 }

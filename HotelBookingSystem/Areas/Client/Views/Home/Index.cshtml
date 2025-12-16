@@ -1,4 +1,5 @@
-﻿@model IEnumerable<HotelBookingSystem.Models.RoomType>
+﻿@using HotelBookingSystem.Models.Models.ViewModels
+@model HomeVM
 
 <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
     <div class="carousel-inner">
@@ -15,42 +16,65 @@
 <div class="container mt-n5" style="position: relative; z-index: 10;">
     <div class="card shadow border-0">
         <div class="card-body p-4 bg-white rounded">
-            <form class="row g-3 align-items-end">
+            <form asp-action="Index" method="get" class="row g-3 align-items-end">
                 <div class="col-md-4">
                     <label class="form-label fw-bold">Check-in Date</label>
-                    <input type="date" class="form-control">
+                    <input asp-for="CheckInDate" type="date" class="form-control"
+                           value="@Model.CheckInDate?.ToString("yyyy-MM-dd")">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-bold">Check-out Date</label>
-                    <input type="date" class="form-control">
+                    <input asp-for="CheckOutDate" type="date" class="form-control"
+                           value="@Model.CheckOutDate?.ToString("yyyy-MM-dd")">
                 </div>
                 <div class="col-md-4">
                     <button type="submit" class="btn btn-primary w-100 py-2">Check Availability</button>
                 </div>
+                @if (Model.CheckInDate != null)
+                {
+                    <div class="col-12 text-end mt-2">
+                        <a asp-action="Index" class="text-secondary text-decoration-none">
+                            <i class="bi bi-x-circle"></i> Clear Filter
+                        </a>
+                    </div>
+                }
             </form>
         </div>
     </div>
 </div>
-
 <div class="container my-5">
-    <h2 class="text-center mb-4 text-primary">Our Rooms</h2>
+    <h2 class="text-center mb-4 text-primary">Available Rooms</h2>
     <div class="row">
-        @foreach (var room in Model)
+        @if (Model.RoomList.Any())
         {
-            <div class="col-md-4 mb-4">
-                <div class="card shadow border-0 h-100">
-                    <img src="@room.ImageUrl" class="card-img-top" style="height: 250px; object-fit: cover;" alt="@room.Name">
-                    <div class="card-body">
-                        <h5 class="card-title text-primary">@room.Name</h5>
-                        <p class="card-text text-muted">
-                            @Html.Raw(room.Description?.Length > 100 ? room.Description.Substring(0, 100) + "..." : room.Description)
-                        </p>
-                        <h4 class="text-success">$@room.PricePerNight <span class="fs-6 text-muted">/ night</span></h4>
-                    </div>
-                    <div class="card-footer bg-white border-0 pb-3">
-                        <a asp-action="Details" asp-route-id="@room.RoomTypeId" class="btn btn-outline-primary w-100">Details</a>
+            @foreach (var room in Model.RoomList)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow border-0 h-100">
+                        <img src="@room.RoomType.ImageUrl" class="card-img-top" style="height: 250px; object-fit: cover;" alt="@room.RoomType.Name">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title text-primary">@room.RoomType.Name</h5>
+                                <span class="badge bg-info text-dark align-self-center">No. @room.RoomNumber</span>
+                            </div>
+
+                            <p class="card-text text-muted">
+                                @Html.Raw(room.RoomType.Description?.Length > 100 ? room.RoomType.Description.Substring(0, 100) + "..." : room.RoomType.Description)
+                            </p>
+                            <h4 class="text-success">$@room.RoomType.PricePerNight <span class="fs-6 text-muted">/ night</span></h4>
+                        </div>
+                        <div class="card-footer bg-white border-0 pb-3">
+                            <a asp-action="Details" asp-route-id="@room.RoomTypeId" class="btn btn-outline-primary w-100">Details</a>
+                        </div>
                     </div>
                 </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <h4 class="text-muted">No rooms available for the selected dates.</h4>
+                <p>Please try changing your search criteria.</p>
             </div>
         }
     </div>

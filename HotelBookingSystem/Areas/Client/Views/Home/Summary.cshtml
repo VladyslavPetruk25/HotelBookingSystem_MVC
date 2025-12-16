@@ -1,0 +1,84 @@
+﻿@model HotelBookingSystem.Models.Booking
+
+<form method="post" asp-action="CreateBooking">
+    <input asp-for="RoomId" hidden />
+
+    <input asp-for="CheckInDate" type="hidden" value="@Model.CheckInDate.ToString("yyyy-MM-dd")"/>
+    <input asp-for="CheckOutDate" type="hidden" value="@Model.CheckOutDate.ToString("yyyy-MM-dd")"/>
+    <input asp-for="TotalCost" hidden />
+    <input asp-for="UserId" hidden />
+
+    <div class="container pt-4">
+        <div class="card shadow border-0">
+            <div class="card-header bg-success bg-gradient text-light ml-0 py-4">
+                <div class="row px-4">
+                    <div class="col-6">
+                        <h5 class="pt-2 text-white">Booking Summary</h5>
+                    </div>
+                    <div class="col-6 text-end">
+                        <a asp-action="Details" asp-route-id="@Model.Room.RoomTypeId" class="btn btn-outline-light btn-sm">Back to Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="container rounded p-2">
+                    <div class="row">
+                        <div class="col-12 col-lg-6 pb-4">
+                            <div class="row my-1">
+                                <div class="col-3">Name</div>
+                                <div class="col-9">
+                                    <input asp-for="Name" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-3">Phone</div>
+                                <div class="col-9">
+                                    <input asp-for="Phone" class="form-control" />
+                                    <span asp-validation-for="Phone" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="row my-1">
+                                <div class="col-3">Email</div>
+                                <div class="col-9">
+                                    <input asp-for="Email" class="form-control" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-5 offset-lg-1">
+                            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-info">Order Summary:</span>
+                            </h4>
+                            <ul class="list-group mb-3">
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="my-0">@Model.Room.RoomType.Name</h6>
+                                        <small class="text-muted">Stay: @((Model.CheckOutDate - Model.CheckInDate).Days) Nights</small>
+                                    </div>
+                                    <span class="text-muted">@Model.Room.RoomType.PricePerNight.ToString("c") / night</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <small>Room Number (Auto-assigned)</small>
+                                    <strong>#@Model.Room.RoomNumber</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between bg-light">
+                                    <small class="text-info">Total (USD)</small>
+                                    <strong class="text-info">@Model.TotalCost.ToString("c")</strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-12 col-md-4 offset-md-8">
+                        <button type="submit" class="btn btn-primary form-control">Confirm Booking</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

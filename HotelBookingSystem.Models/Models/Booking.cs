@@ -11,9 +11,9 @@ namespace HotelBookingSystem.Models
         public int RoomId { get; set; }
         [ForeignKey("RoomId")]
         public virtual Room Room { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         [ForeignKey("UserId")]
-        public virtual User User { get; set; }
+        public virtual ApplicationUser User { get; set; }
         [Required]
         public DateTime CheckInDate { get; set; }
         [Required]
@@ -23,5 +23,11 @@ namespace HotelBookingSystem.Models
         public string Status { get; set; }
         [Required]
         public decimal TotalCost { get; set; }
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string Phone { get; set; }
     }
 }

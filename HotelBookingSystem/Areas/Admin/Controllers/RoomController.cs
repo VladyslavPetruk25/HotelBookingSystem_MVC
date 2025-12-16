@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using HotelBookingSystem.Utility;
 using Microsoft.Identity.Client;
 using HotelBookingSystem.Models.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotelBookingSystem.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.ROLE_ADMIN)]
     public class RoomController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -56,8 +58,6 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                roomVM.Room.Status = SD.ROOM_AVAILABLE;
-
                 _unitOfWork.Room.Add(roomVM.Room);
                 _unitOfWork.Save();
                 TempData["success"] = "Room created successfully";
@@ -117,7 +117,6 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                roomVM.Room.Status = SD.ROOM_AVAILABLE;
                 _unitOfWork.Room.Update(roomVM.Room);
                 _unitOfWork.Save();
                 TempData["success"] = "Room updated successfully";
@@ -140,9 +139,24 @@ namespace HotelBookingSystem.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var objRoomList = _unitOfWork.Room.GetAll(includeProperties: "RoomType").ToList();
+            var objRoomList = _unitOfWork.Room.GetAll(includeProperties: "RoomType");
 
-            return Json(new { data = objRoomList });
+            var today = DateTime.Today;
+
+            var occupiedRoomIds = _unitOfWork.Booking
+                .GetAll(u => u.Status != SD.STATUS_CANCELLED && u.CheckInDate <= today && u.CheckOutDate > today)
+                .Select(u => u.RoomId).ToList();
+
+            var dataForTable = objRoomList.Select(room => new
+            {
+                room.RoomId,
+                room.RoomNumber,
+                room.RoomType,
+                room.Flour,
+                Status = occupiedRoomIds.Contains(room.RoomId) ? SD.ROOM_OCCUPIED : SD.ROOM_AVAILABLE
+            });
+
+            return Json(new { data = dataForTable });
         }
 
         [HttpDelete]

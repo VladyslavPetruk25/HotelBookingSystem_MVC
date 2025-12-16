@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace HotelBookingSystem.DataAccess.Data
 {
@@ -14,7 +15,7 @@ namespace HotelBookingSystem.DataAccess.Data
         public DbSet<Booking> Booking { get; set; }
         public DbSet<Room> Room { get; set; }
         public DbSet<RoomType> RoomType { get; set; } 
-        public DbSet<User> Users { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -40,54 +41,20 @@ namespace HotelBookingSystem.DataAccess.Data
                     ImageUrl = ""
                 }
             );
-            modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    UserId = 1,
-                    FirstName = "Admin",
-                    LastName = "System",
-                    Email = "petrukvl450@gmail.com",
-                    PhoneNumber = "000",
-                    Role = "Admin"
-                },
-                new User
-                {
-                    UserId = 2,
-                    FirstName = "Vladyslav",
-                    LastName = "Petruk",
-                    Email = "vladyslav.petruk.24@pnu.edu.ua",
-                    PhoneNumber = "0677692752",
-                    Role = "User"
-                }
-            );
             modelBuilder.Entity<Room>().HasData(
                 new Room
                 {
                     RoomId = 1,
                     RoomNumber = 101,
                     Flour = 1,
-                    RoomTypeId = 1,
-                    Status = "Available"
+                    RoomTypeId = 1
                 },
                 new Room
                 {
                     RoomId = 2,
                     RoomNumber = 205,
                     Flour = 2,
-                    RoomTypeId = 2,
-                    Status = "Available"
-                }
-            );
-            modelBuilder.Entity<Booking>().HasData(
-                new Booking
-                {
-                    BookingId = 1,
-                    RoomId = 1,
-                    UserId = 1,
-                    CheckInDate = new DateTime(2025, 12, 01),
-                    CheckOutDate = new DateTime(2025, 12, 05),
-                    Status = "New",
-                    TotalCost = 4000m
+                    RoomTypeId = 2
                 }
             );
         }

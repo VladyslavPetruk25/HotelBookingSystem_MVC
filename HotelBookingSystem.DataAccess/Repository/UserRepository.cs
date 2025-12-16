@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace HotelBookingSystem.DataAccess.Repository
 {
-    public class UserRepository : Repository<User>, IUserRepository
+    public class UserRepository : Repository<ApplicationUser>, IUserRepository
     {
         private ApplicationDbContext _db;
         public UserRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }
-        public void Update(User obj)
+        public void Update(ApplicationUser obj)
         {
             _db.Users.Update(obj);
         }
