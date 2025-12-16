@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using HotelBookingSystem.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,21 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    });
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var servises = scope.ServiceProvider;
+    var dbContext = servises.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+}
 
 var defaultCulture = new CultureInfo("en-US");
 var localizationOptions = new RequestLocalizationOptions
@@ -65,6 +80,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{area=Client}/{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 
 app.Run();

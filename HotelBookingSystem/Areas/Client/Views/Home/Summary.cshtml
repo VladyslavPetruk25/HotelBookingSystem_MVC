@@ -1,8 +1,7 @@
 ﻿@model HotelBookingSystem.Models.Booking
 
-<form method="post" asp-action="CreateBooking">
+<form method="post" asp-action="SummaryPOST">
     <input asp-for="RoomId" hidden />
-
     <input asp-for="CheckInDate" type="hidden" value="@Model.CheckInDate.ToString("yyyy-MM-dd")"/>
     <input asp-for="CheckOutDate" type="hidden" value="@Model.CheckOutDate.ToString("yyyy-MM-dd")"/>
     <input asp-for="TotalCost" hidden />

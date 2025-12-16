@@ -6,6 +6,8 @@ using HotelBookingSystem.Models.Models.ViewModels;
 using HotelBookingSystem.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Common;
+using Stripe.Checkout;
 
 namespace HotelBookingSystem.Areas.Client.Controllers
 {
@@ -103,6 +105,54 @@ namespace HotelBookingSystem.Areas.Client.Controllers
         }
 
         [HttpPost]
+        [ActionName("SummaryPOST")]
+        [ValidateAntiForgeryToken]
+        public IActionResult SummaryPOST(Booking booking)
+        {
+            var room = _unitOfWork.Room.Get(u => u.RoomId == booking.RoomId, includeProperties: "RoomType");
+
+            TimeSpan duration = booking.CheckOutDate - booking.CheckInDate;
+            booking.TotalCost = room.RoomType.PricePerNight * duration.Days;
+
+            booking.Status = SD.STATUS_PENDING;
+            booking.BookingDate = DateTime.Now;
+
+            _unitOfWork.Booking.Add(booking);
+            _unitOfWork.Save();
+
+            var domain = "https://localhost:7265/";
+
+            var options = new SessionCreateOptions
+            {
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = domain + $"client/booking/BookingConfirmation?bookingId={booking.BookingId}",
+                CancelUrl = domain + $"client/home/index"
+            };
+
+            options.LineItems.Add(new SessionLineItemOptions
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    UnitAmount = (long)(booking.TotalCost * 100),
+                    Currency = "usd",
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = room.RoomType.Name
+                    },
+                },
+                Quantity = 1
+            });
+
+            var service = new SessionService();
+            Session session = service.Create(options);
+
+            Response.Headers.Append("Location", session.Url);
+
+            return new StatusCodeResult(303);
+        }
+
+        [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
         public IActionResult CreateBooking(Booking booking)
@@ -132,6 +182,14 @@ namespace HotelBookingSystem.Areas.Client.Controllers
 
         public IActionResult BookingConfirmation(int id)
         {
+            var booking = _unitOfWork.Booking.Get(u => u.BookingId == id);
+
+            if (booking != null && booking.Status == SD.STATUS_PENDING)
+            {
+                booking.Status = SD.STATUS_APPROVED;
+                _unitOfWork.Save();
+            }
+
             return View(id);
         }
 

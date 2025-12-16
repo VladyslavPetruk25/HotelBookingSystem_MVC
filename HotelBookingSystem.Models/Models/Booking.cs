@@ -29,5 +29,6 @@ namespace HotelBookingSystem.Models
         public string Email { get; set; }
         [Required]
         public string Phone { get; set; }
+        public DateTime BookingDate { get; set; }
     }
 }
