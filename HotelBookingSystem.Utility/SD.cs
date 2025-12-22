@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HotelBookingSystem.Utility
+﻿namespace HotelBookingSystem.Utility
 {
     public static class SD
     {
@@ -20,5 +14,9 @@ namespace HotelBookingSystem.Utility
         public const string STATUS_PENDING = "Pending";
         public const string STATUS_REFUNDED = "Refunded";
         public const string STATUS_COMPLETED = "Completed";
+
+        public const string PaymentStatusPending = "Pending";
+        public const string PaymentStatusApproved = "Approved";
+        public const string PaymentStatusRejected = "Rejected";
     }
 }

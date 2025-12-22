@@ -53,21 +53,22 @@ namespace HotelBookingSystem.Areas.Client.Controllers
             return View(roomType);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         [HttpPost]
         [Authorize]
         public IActionResult Summary(int roomTypeId, DateTime checkInDate, DateTime checkOutDate)
         {
+            if (checkOutDate <= checkInDate)
+            {
+                TempData["error"] = "Check-out date must be after check-in date.";
+                return RedirectToAction(nameof(Details), new { id = roomTypeId });
+            }
+
             var bookedRoomIds = _unitOfWork.Booking
                 .GetAll(u => u.Status != SD.STATUS_CANCELLED && u.Room.RoomTypeId == roomTypeId &&
                 (u.CheckInDate < checkOutDate && checkInDate < u.CheckOutDate)).Select(u => u.RoomId).ToList();
 
             var availableRoom = _unitOfWork.Room
-                .GetAll(u => u.RoomTypeId == roomTypeId & !bookedRoomIds
+                .GetAll(u => u.RoomTypeId == roomTypeId && !bookedRoomIds
                 .Contains(u.RoomId), includeProperties: "RoomType").FirstOrDefault();
 
             if (availableRoom == null)
@@ -76,16 +77,22 @@ namespace HotelBookingSystem.Areas.Client.Controllers
                 return RedirectToAction(nameof(Details), new { id = roomTypeId });
             }
 
-            if (checkOutDate <= checkInDate)
-            {
-                TempData["error"] = "Check-out date must be after check-in date.";
-
-                return RedirectToAction(nameof(Details), new { id = roomTypeId });
-            }
-
             var claimsIdentity = (ClaimsIdentity)User.Identity!;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             var applicationUser = _unitOfWork.User.Get(u => u.Id == userId);
+            
+            if (applicationUser == null)
+            {
+                return RedirectToAction("Logout", "Account", new { area = "Identity" });
+            }
+
+            string userName = applicationUser.FirstName ?? "";
+            string userSurname = applicationUser.LastName ?? "";
+
+            if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(userSurname))
+            {
+                userName = applicationUser.Email ?? "Guest";
+            }
 
             Booking booking = new Booking
             {
@@ -96,9 +103,9 @@ namespace HotelBookingSystem.Areas.Client.Controllers
                 UserId = userId,
                 User = applicationUser,
                 TotalCost = availableRoom.RoomType.PricePerNight * (checkOutDate - checkInDate).Days,
-                Name = applicationUser.FirstName + " " + applicationUser.LastName,
+                Name = (userName + " " + userSurname).Trim(),
                 Email = applicationUser.Email,
-                Phone = applicationUser.PhoneNumber
+                Phone = applicationUser.PhoneNumber ?? ""
             };
 
             return View(booking);

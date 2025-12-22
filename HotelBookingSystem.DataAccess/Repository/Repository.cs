@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HotelBookingSystem.DataAccess.Data;
+﻿using HotelBookingSystem.DataAccess.Data;
 using HotelBookingSystem.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using System.Linq.Expressions;
 
 namespace HotelBookingSystem.DataAccess.Repository

@@ -1,0 +1,26 @@
+﻿@model int
+
+<div class="container pt-4">
+    <div class="card shadow border-0 mt-4">
+        <div class="card-header bg-success bg-gradient ml-0 py-3">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h2 class="text-white py-2">Booking is successful!</h2>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            <div class="text-center mb-3">
+                <h3 class="text-success">Thank you! Payment was successful.</h3>
+                <p class="fs-4">Number of booking: <strong>#@Model</strong></p>
+            </div>
+
+            <div class="text-center mt-3">
+                <p>The administrator will contact you if necessary.</p>
+                <a asp-area="Client" asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">
+                    Return to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

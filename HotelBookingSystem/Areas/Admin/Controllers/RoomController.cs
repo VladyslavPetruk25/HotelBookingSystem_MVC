@@ -1,10 +1,8 @@
-﻿using HotelBookingSystem.DataAccess.Data;
-using HotelBookingSystem.DataAccess.Repository.IRepository;
+﻿using HotelBookingSystem.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using HotelBookingSystem.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using HotelBookingSystem.Utility;
-using Microsoft.Identity.Client;
 using HotelBookingSystem.Models.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 

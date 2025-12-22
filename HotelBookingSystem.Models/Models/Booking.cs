@@ -21,6 +21,9 @@ namespace HotelBookingSystem.Models
         [Required]
         [MaxLength(20)]
         public string Status { get; set; }
+        public string? PaymentStatus { get; set; }
+        public DateTime PaymentDate { get; set; }
+        public string? PaymentIntentId { get; set; }
         [Required]
         public decimal TotalCost { get; set; }
         [Required]
